@@ -29,4 +29,13 @@
  */
 export function maskAadhaar(aadhaarNumber) {
   // Your code here
+  if (
+    typeof aadhaarNumber !== "string" ||
+    aadhaarNumber.length !== 12 ||
+    aadhaarNumber.match(/^\d+$/) === null
+  )
+    return "INVALID";
+  const last4Digits = aadhaarNumber.slice(-4);
+  const maskedAadhaar = "X".repeat(4) + "-" + "X".repeat(4) + "-" + last4Digits;
+  return maskedAadhaar;
 }

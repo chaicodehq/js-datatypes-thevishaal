@@ -63,4 +63,86 @@
  */
 export function validateForm(formData) {
   // Your code here
+  const errors = {};
+
+  // name
+  const name = formData.name?.trim();
+  if (
+    typeof formData.name !== "string" ||
+    name.length < 2 ||
+    name.length > 50
+  ) {
+    errors.name = "Name must be 2-50 characters";
+  }
+
+  // email
+  const firstAt = formData.email.indexOf("@");
+  const lastAt = formData.email.lastIndexOf("@");
+  if (typeof formData.email !== "string") {
+    errors.email = "Invalid email format";
+  }
+  if (
+    firstAt === -1 ||
+    firstAt !== lastAt ||
+    !formData.email.includes(".", firstAt)
+  ) {
+    errors.email = "Invalid email format";
+  }
+
+  // phone
+  if (
+    typeof formData.phone !== "string" ||
+    formData.phone.length !== 10 ||
+    !["6", "7", "8", "9"].some((digit) => formData.phone.startsWith(digit)) ||
+    !formData.phone.match(/^\d+$/)
+  ) {
+    errors.phone = "Invalid Indian phone number";
+  }
+
+  // age
+  if (typeof formData.age === "string") {
+    const parseAge = parseInt(formData.age);
+    if (
+      isNaN(parseAge) ||
+      !Number.isInteger(parseAge) ||
+      parseAge < 16 ||
+      parseAge > 100
+    ) {
+      errors.age = "Age must be an integer between 16 and 100";
+    }
+  } else if (
+    !Number.isInteger(formData.age) ||
+    formData.age < 16 ||
+    formData.age > 100
+  ) {
+    errors.age = "Age must be an integer between 16 and 100";
+  }
+
+  // pincode
+  if (
+    typeof formData.pincode !== "string" ||
+    formData.pincode.length !== 6 ||
+    formData.pincode.startsWith("0") ||
+    !formData.pincode.match(/^\d+$/)
+  ) {
+    errors.pincode = "Invalid Indian pincode";
+  }
+
+  // state
+  const state = formData.state ?? "";
+  if (state?.trim() === "") {
+    errors.state = "State is required";
+  }
+
+  // agreeTerms
+  if (Boolean(formData.agreeTerms) !== true) {
+    errors.agreeTerms = "Must agree to terms";
+  }
+
+  const isValid = Object.keys(errors).length === 0;
+
+  return {
+    isValid,
+    errors,
+  };
 }

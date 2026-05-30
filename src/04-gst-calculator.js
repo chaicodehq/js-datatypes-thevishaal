@@ -40,4 +40,66 @@
  */
 export function calculateGST(amount, category) {
   // Your code here
+  /*
+  const GSTRATE = [
+    { categoryName: "essential", gst: 0 },
+    { categoryName: "food", gst: 5 },
+    { categoryName: "standard", gst: 12 },
+    { categoryName: "electronics", gst: 18 },
+    { categoryName: "luxury", gst: 28 },
+  ];
+  if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0)
+    return null;
+
+  if (
+    typeof category !== "string" ||
+    !GSTRATE.map(({ categoryName }) => categoryName.toLowerCase()).includes(
+      category.toLowerCase(),
+    )
+  )
+    return null;
+
+  const cate = GSTRATE.filter(({ categoryName, gst }) =>
+    categoryName.toLowerCase() === category.toLowerCase()
+      ? { categoryName, gst }
+      : null,
+  );
+  const gstAmount = (amount * cate[0].gst) / 100;
+  const totalAmount = parseFloat((amount + gstAmount).toFixed(2));
+
+  return {
+    baseAmount: amount,
+    gstRate: cate[0].gst,
+    gstAmount: parseFloat(gstAmount.toFixed(2)),
+    totalAmount,
+  };
+   */
+
+  const gstRate = {
+    essential: 0,
+    food: 5,
+    standard: 12,
+    electronics: 18,
+    luxury: 28,
+  };
+
+  if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0)
+    return null;
+
+  if (typeof category !== "string") return null;
+
+  const lowerCategory = category.toLowerCase();
+
+  if (!(lowerCategory in gstRate)) return null;
+
+  const gst = gstRate[lowerCategory];
+  const gstAmount = parseFloat(((amount * gst) / 100).toFixed(2));
+  const totalAmount = parseFloat((amount + gstAmount).toFixed(2));
+
+  return {
+    baseAmount: amount,
+    gstAmount,
+    gstRate: gst,
+    totalAmount,
+  };
 }

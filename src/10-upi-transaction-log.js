@@ -48,4 +48,80 @@
  */
 export function analyzeUPITransactions(transactions) {
   // Your code here
+  if (!Array.isArray(transactions) || transactions.length === 0) return null;
+
+  const validTransactions = transactions.filter(
+    (txn) =>
+      typeof txn.amount === "number" &&
+      txn.amount > 0 &&
+      ["credit", "debit"].includes(txn.type.toLowerCase()),
+  );
+
+  if (validTransactions.length === 0) return null;
+
+  const totalCredit = validTransactions.reduce((acc, txn) => {
+    if (txn.type.toLowerCase() === "credit") {
+      return acc + txn.amount;
+    }
+    return acc;
+  }, 0);
+
+  const totalDebit = validTransactions.reduce((acc, txn) => {
+    if (txn.type.toLowerCase() === "debit") {
+      return acc + txn.amount;
+    }
+    return acc;
+  }, 0);
+
+  const netBalance = totalCredit - totalDebit;
+  const transactionCount = validTransactions.length;
+  const avgTransaction = Math.round(
+    (totalCredit + totalDebit) / transactionCount,
+  );
+  const highestTransaction = validTransactions.reduce(
+    (acc, txn) => (txn.amount > acc.amount ? txn : acc),
+    {
+      id: null,
+      type: null,
+      amount: 0,
+      to: null,
+      category: null,
+      date: null,
+    },
+  );
+
+  const categoryBreakdown = validTransactions.reduce((acc, txn) => {
+    acc[txn.category] = (acc[txn.category] || 0) + txn.amount;
+    return acc;
+  }, {});
+
+  const toFrequentContact = validTransactions.reduce((acc, txn) => {
+    acc[txn.to] = (acc[txn.to] || 0) + 1;
+    return acc;
+  }, {});
+
+  const frequentContact = Object.entries(toFrequentContact).reduce(
+    (acc, entry) => {
+      return entry[1] > acc[1] ? entry : acc;
+    },
+    [null, 0],
+  );
+
+  const allAbove100 = validTransactions.every((txn) => txn.amount > 100);
+  const hasLargeTransaction = validTransactions.some(
+    (txn) => txn.amount >= 5000,
+  );
+
+  return {
+    totalCredit,
+    totalDebit,
+    netBalance,
+    transactionCount,
+    avgTransaction,
+    highestTransaction,
+    categoryBreakdown,
+    frequentContact: frequentContact[0],
+    allAbove100,
+    hasLargeTransaction,
+  };
 }
